@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Calendar, Clock, User, Phone, ChevronRight, CheckCircle } from 'lucide-react';
+import { createAppointment } from '../api/AppointmentsApi';
 
 export default function Appointment() {
   const [step, setStep] = useState(1);
@@ -18,9 +19,31 @@ export default function Appointment() {
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Appointment requested:', formData);
+    try {
+      const appointment = {
+        name: formData.fullName,
+        contact: formData.contactNumber,
+        date: formData.date,
+        time: formData.time
+      };
+      const response = await createAppointment(appointment);
+      console.log('Appointment created:', response);
+      
+      // Reset the form and step
+      setFormData({
+        fullName: '',
+        contactNumber: '',
+        date: '',
+        time: ''
+      });
+      setStep(1); // Reset to step 1
+      alert('Your appointment has been booked successfully!');
+    } catch (error) {
+      console.error('Error creating appointment:', error);
+      alert('There was an error booking your appointment. Please try again.');
+    }
   };
 
   return (
@@ -32,17 +55,16 @@ export default function Appointment() {
         <ul className="list-disc list-inside text-gray-700 space-y-2">
           <li>Step 1: Enter your full name and contact number.</li>
           <li>Step 2: Select your preferred date and time.</li>
-          <li>Step 3: Review your appointment details and confirm.</li>
         </ul>
       </div>
 
       {/* Form */}
       <div className="md:w-1/2">
         <div className="flex justify-between items-center mb-6">
-          {[1, 2, 3].map((num) => (
+          {[1, 2].map((num) => (
             <div key={num} className={`flex items-center ${step >= num ? 'text-blue-600' : 'text-gray-400'}`}>
               {step > num ? <CheckCircle size={20} /> : <span className="font-medium">{num}</span>}
-              {num !== 3 && <ChevronRight size={20} />}
+              {num !== 2 && <ChevronRight size={20} />}
             </div>
           ))}
         </div>
@@ -116,21 +138,11 @@ export default function Appointment() {
             </div>
           )}
 
-          {step === 3 && (
-            <div className="text-center">
-              <p className="text-lg font-medium">Review your appointment details:</p>
-              <p><strong>Name:</strong> {formData.fullName}</p>
-              <p><strong>Contact:</strong> {formData.contactNumber}</p>
-              <p><strong>Date:</strong> {formData.date}</p>
-              <p><strong>Time:</strong> {formData.time}</p>
-            </div>
-          )}
-
           <div className="flex justify-between">
             {step > 1 && (
               <button type="button" onClick={prevStep} className="bg-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-400">Back</button>
             )}
-            {step < 3 ? (
+            {step < 2 ? (
               <button type="button" onClick={nextStep} className="bg-blue-600 text-white py-2 px-6 rounded-lg hover:bg-blue-700">Next</button>
             ) : (
               <button type="submit" className="bg-green-600 text-white py-2 px-6 rounded-lg hover:bg-green-700">Confirm</button>

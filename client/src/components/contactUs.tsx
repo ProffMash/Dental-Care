@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Mail, MessageSquare } from 'lucide-react';
+import { createContact } from '../api/contactApi';
 
 export default function Contact() {
   const [formData, setFormData] = useState({
@@ -8,9 +9,28 @@ export default function Contact() {
     message: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Message sent:', formData);
+    try {
+      const contact = {
+        name: '', 
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message
+      };
+      const response = await createContact(contact);
+      console.log('Message sent:', response);
+      // Reset the form
+      setFormData({
+        email: '',
+        subject: '',
+        message: ''
+      });
+      alert('Your message has been sent successfully!');
+    } catch (error) {
+      console.error('Error sending message:', error);
+      alert('There was an error sending your message. Please try again.');
+    }
   };
 
   return (
