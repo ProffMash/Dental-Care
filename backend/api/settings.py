@@ -23,14 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-!9fjavsgwc(trky1b)x^z@3#vk4x++pppsndul5#zbnvq0v^ha'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['jtapi-hl1e.onrender.com', '127.0.0.1', 'localhost']
 
 CORS_ALLOWED_ORIGINS = [
    'http://localhost:5173',
-   '',
-   '',
+   'https://dentalcare-pi.vercel.app',
+   'https://jtapi-hl1e.onrender.com',
 ]
 
 CORS_ALLOW_HEADERS = [
